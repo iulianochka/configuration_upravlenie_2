@@ -36,3 +36,36 @@ def validate_args(args: argparse.Namespace) -> None:
                 file=sys.stderr
             )
             sys.exit(1)
+
+
+def get_direct_dependencies(package: str, repo: str, test_mode: bool) -> list:
+    """
+    Извлекает прямые зависимости для пакета из тестового файла.
+
+    :param package: имя пакета.
+    :param repo: путь к файлу или URL.
+    :param test_mode: флаг тестового режима.
+    :return: список имен пакетов-зависимостей.
+    """
+    dependencies = []
+    
+    if test_mode:
+        with open(repo, "r", encoding="utf-8") as file:
+            for line in file:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                if ":" in line:
+                    pkg_name, deps_str = line.split(":", 1)
+                    pkg_name = pkg_name.strip()
+                    
+                    if pkg_name == package:
+                        deps_str = deps_str.strip()
+                        if deps_str:
+                            deps = deps_str.split(",")
+                            for dep in deps:
+                                dependencies.append(dep.strip())
+                        break
+                        
+    return dependencies

@@ -3,7 +3,7 @@
 Вариант 16, Этап 1: Минимальный прототип с конфигурацией.
 """
 import argparse
-from parser import validate_args
+from parser import validate_args, get_direct_dependencies
 
 
 def parse_args() -> argparse.Namespace:
@@ -60,6 +60,15 @@ def main() -> None:
     args = parse_args()
     validate_args(args)
     print_config(args)
+
+    print(f"Прямые зависимости для пакета '{args.package}':")
+    deps = get_direct_dependencies(args.package, args.repo, args.test_mode)
+    
+    if not deps:
+        print(" - (нет зависимостей)")
+    else:
+        for dep in deps:
+            print(f" - {dep}")
 
 
 if __name__ == "__main__":
