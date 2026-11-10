@@ -52,7 +52,7 @@ def print_config(args: argparse.Namespace) -> None:
     print(f"repo:      {args.repo}")
     print(f"version:   {args.version}")
     print(f"test_mode: {args.test_mode}")
-    print("------------------------=")
+    print("-" * 23)
 
 
 def main() -> None:
