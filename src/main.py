@@ -1,9 +1,10 @@
 """
 Визуализатор графа зависимостей пакетов.
-Вариант 16, Этап 1: Минимальный прототип с конфигурацией.
+Вариант 16, Этап 2: Сбор данных о зависимостях.
 """
 import argparse
-from parser import validate_args, get_direct_dependencies
+from parser import validate_args
+from dependencies import get_direct_dependencies
 
 
 def parse_args() -> argparse.Namespace:
@@ -52,7 +53,22 @@ def print_config(args: argparse.Namespace) -> None:
     print(f"repo:      {args.repo}")
     print(f"version:   {args.version}")
     print(f"test_mode: {args.test_mode}")
-    print("------------------------")
+    print("-" * 23)
+
+
+def print_dependencies(package: str, deps: list) -> None:
+    """
+    Выводит список прямых зависимостей.
+
+    :param package: имя пакета.
+    :param deps: список зависимостей.
+    """
+    print(f"Прямые зависимости для пакета '{package}':")
+    if not deps:
+        print(" - (нет зависимостей)")
+        return
+    for dep in deps:
+        print(f" - {dep}")
 
 
 def main() -> None:
@@ -60,15 +76,10 @@ def main() -> None:
     args = parse_args()
     validate_args(args)
     print_config(args)
-
-    print(f"Прямые зависимости для пакета '{args.package}':")
-    deps = get_direct_dependencies(args.package, args.repo, args.test_mode)
-    
-    if not deps:
-        print(" - (нет зависимостей)")
-    else:
-        for dep in deps:
-            print(f" - {dep}")
+    deps = get_direct_dependencies(
+        args.package, args.repo, args.test_mode, args.version
+    )
+    print_dependencies(args.package, deps)
 
 
 if __name__ == "__main__":
